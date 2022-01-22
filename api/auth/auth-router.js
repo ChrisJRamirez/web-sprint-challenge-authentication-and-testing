@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../jokes/jokes-model");
 
-const {checkUsernameFree, validateUser, checkUsernameExists} = require("./auth-middleware");
+const {checkUsernameFree, validateUser} = require("./auth-middleware");
 
 router.post('/register', checkUsernameFree, validateUser, (req, res, next) => {
   // res.end('implement register, please!');
@@ -46,8 +46,24 @@ router.post('/register', checkUsernameFree, validateUser, (req, res, next) => {
   */
 
 
-router.post('/login', validateUser, checkUsernameExists, (req, res, next) => {
-  if(bcrypt.compareSync(req.body.password, req.user.password)){
+// router.post('/login', validateUser, checkUsernameExists, (req, res, next) => {
+//   if(bcrypt.compareSync(req.body.password, req.user.password)){
+//     const token = buildToken(req.user)
+//     res.json({
+//       message: `Welcome ${req.user.username}`,
+//       token,
+//     })
+//   }
+//   else {
+//     next({status: 401, message: "invalid credentials"})
+//   }
+
+// });
+
+router.post('/login', validateUser, async (req, res, next) => {
+  const [user] = await User.findBy({username: req.body.username})
+  req.user = user
+  if(user && bcrypt.compareSync(req.body.password, req.user.password)){
     const token = buildToken(req.user)
     res.json({
       message: `Welcome ${req.user.username}`,

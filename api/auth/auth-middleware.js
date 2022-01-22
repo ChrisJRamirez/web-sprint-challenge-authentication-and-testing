@@ -32,23 +32,23 @@ async function checkUsernameFree(req, res, next) {
 // 4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
 // the response body should include a string exactly as follows: "invalid credentials".
 
-async function checkUsernameExists(req, res, next) {
-  try{
-    const [user] = await User.findBy({username: req.body.username})
-    if(!user){
-      next({message:"invalid credentials", status: 401})
-    }else {
-      req.user = user
-      next()
-    }
-  }catch(err){
-    next(err)
-  }
-};
+// no longer need this middleware below
+// async function checkUsernameExists(req, res, next) {
+//   try{
+//     const [user] = await User.findBy({username: req.body.username})
+//     if(!user){
+//       next({message:"invalid credentials", status: 401})
+//     }else {
+//       req.user = user
+//       next()
+//     }
+//   }catch(err){
+//     next(err)
+//   }
+// };
 
 
 module.exports = {
   checkUsernameFree,
   validateUser,
-  checkUsernameExists,
 }
