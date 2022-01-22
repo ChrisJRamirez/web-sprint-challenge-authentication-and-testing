@@ -2,9 +2,11 @@ const router = require('express').Router();
 const {JWT_SECRET, BCRYPT_ROUNDS} = require("../secrets/index");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../jokes/jokes-model")
+const User = require("../jokes/jokes-model");
 
-router.post('/register', (req, res, next) => {
+const {checkUsernameFree, validateUser} = require("./auth-middleware");
+
+router.post('/register', checkUsernameFree, validateUser, (req, res, next) => {
   // res.end('implement register, please!');
 
   const {username, password} = req.body
