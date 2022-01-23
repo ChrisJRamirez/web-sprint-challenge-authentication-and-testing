@@ -1,3 +1,4 @@
+const supertest = require("supertest");
 const request = require("supertest");
 const db = require("../data/dbConfig");
 const server = require("./server");
@@ -79,6 +80,24 @@ describe("[POST] /login", () => {
 })
 
 // [GET] /api/jokes
+describe("[GET] /jokes", () => {
+  it("7) Requires token to see jokes", async () => {
+    let res
+    res = await request(server).get("/api/jokes")
+    expect(res.body).toMatchObject({message: "token required"})
+  })
+  it("8) Can view jokes once registered and logged in correctly", async () => {
+    let res
+    let token
+
+    res = await request(server).post("/api/auth/register").send(user1)
+    res = await request(server).post("/api/auth/login").send(user1)
+
+    token = res.body.token
+    res = await request(server).get("/api/jokes").set("Authorization", token)
+    expect(res.body).toHaveLength(3)
+  })
+})
 
 
 // test('sanity', () => {
